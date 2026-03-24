@@ -1,11 +1,19 @@
 import { motion } from 'motion/react';
 import { ArrowUpRight, CalendarDays, Clock, Plus, Settings } from 'lucide-react';
-import { SUBJECTS, MILESTONE } from '../constants';
+import { SUBJECTS, MILESTONE, SCHEDULE_EVENTS } from '../constants';
 import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
   const featuredSubject = SUBJECTS.find(s => s.featured);
   const otherSubjects = SUBJECTS.filter(s => !s.featured);
+
+  // Get today's day of the week
+  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as const;
+  const todayIndex = new Date().getDay();
+  const todayName = daysOfWeek[todayIndex] as any;
+  
+  // Get today's schedule events
+  const todayEvents = SCHEDULE_EVENTS.filter(e => e.day === todayName).slice(0, 3);
 
   return (
     <motion.div 
@@ -107,428 +115,35 @@ export default function Dashboard() {
             <Link to="/schedule" className="text-primary text-xs font-bold tracking-widest uppercase hover:underline">Full Schedule</Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[
-              { time: '08:00', title: 'Software Engineering', type: 'Lecture', color: '#bb0013' },
-              { time: '10:00', title: 'Database Lab', type: 'Lab', color: '#3b82f6' },
-              { time: '14:00', title: 'Python for Data Science', type: 'Lecture', color: '#f59e0b' },
-            ].map((event, i) => (
-              <div key={i} className="bg-white p-4 rounded-xl border border-outline flex items-center gap-4 editorial-shadow">
-                <div className="text-center min-w-[60px]">
-                  <p className="text-xs font-bold text-on-surface">{event.time}</p>
-                  <p className="text-[10px] font-bold text-secondary uppercase tracking-widest">AM</p>
-                </div>
-                <div className="w-px h-8 bg-outline" />
-                <div>
-                  <h4 className="text-sm font-bold text-on-surface">{event.title}</h4>
-                  <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: event.color }} />
-                    <p className="text-[10px] font-bold text-secondary uppercase tracking-widest">{event.type}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Recent Notes */}
-        <div className="mt-16">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-black text-on-surface">Recent Notes</h3>
-            <Link to="/editor" className="text-primary text-xs font-bold tracking-widest uppercase hover:underline">View All</Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              { title: 'Data Science Foundations with Pandas', date: 'Oct 24', subject: 'Python', color: '#f59e0b' },
-              { title: 'Asynchronous Programming & Asyncio', date: 'Oct 21', subject: 'Python', color: '#f59e0b' },
-            ].map((note, i) => (
-              <Link key={i} to="/editor" className="bg-white p-6 rounded-xl border border-outline flex flex-col gap-4 hover:bg-surface-low transition-all editorial-shadow group">
-                <div className="flex justify-between items-start">
-                  <h4 className="text-lg font-bold text-on-surface group-hover:text-primary transition-colors">{note.title}</h4>
-                  <span className="text-[10px] font-bold text-secondary uppercase tracking-widest">{note.date}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: note.color }} />
-                  <span className="text-[10px] font-bold text-secondary uppercase tracking-widest">{note.subject}</span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Resources */}
-        <div className="mt-16">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-black text-on-surface">Quick Resources</h3>
-            <Link to="/resources" className="text-primary text-xs font-bold tracking-widest uppercase hover:underline">Browse All</Link>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { title: 'Academic Calendar', icon: '📅' },
-              { title: 'Library Access', icon: '📚' },
-              { title: 'Student Portal', icon: '🎓' },
-              { title: 'Tech Support', icon: '🛠️' },
-            ].map((resource, i) => (
-              <Link key={i} to="/resources" className="bg-white p-4 rounded-xl border border-outline flex flex-col items-center justify-center gap-2 hover:bg-surface-low transition-all editorial-shadow group text-center">
-                <span className="text-2xl">{resource.icon}</span>
-                <span className="text-[10px] font-bold text-on-surface uppercase tracking-widest group-hover:text-primary transition-colors">{resource.title}</span>
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Academic Progress */}
-        <div className="mt-16">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-black text-on-surface">Academic Progress</h3>
-            <span className="text-secondary text-[10px] font-bold uppercase tracking-widest">Semester 1 • 2024</span>
-          </div>
-          <div className="bg-white p-8 rounded-2xl border border-outline shadow-sm">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-              <div>
-                <div className="flex justify-between items-end mb-2">
-                  <span className="text-[10px] font-bold text-secondary uppercase tracking-widest">Overall GPA</span>
-                  <span className="text-2xl font-black text-on-surface">9.2</span>
-                </div>
-                <div className="h-1.5 w-full bg-surface-low rounded-full overflow-hidden">
-                  <div className="h-full bg-primary w-[92%]" />
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between items-end mb-2">
-                  <span className="text-[10px] font-bold text-secondary uppercase tracking-widest">Credits Earned</span>
-                  <span className="text-2xl font-black text-on-surface">18 <span className="text-xs font-medium text-secondary">/ 24</span></span>
-                </div>
-                <div className="h-1.5 w-full bg-surface-low rounded-full overflow-hidden">
-                  <div className="h-full bg-green-500 w-[75%]" />
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between items-end mb-2">
-                  <span className="text-[10px] font-bold text-secondary uppercase tracking-widest">Attendance</span>
-                  <span className="text-2xl font-black text-on-surface">96%</span>
-                </div>
-                <div className="h-1.5 w-full bg-surface-low rounded-full overflow-hidden">
-                  <div className="h-full bg-blue-500 w-[96%]" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Announcements */}
-        <div className="mt-16">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-black text-on-surface">Announcements</h3>
-            <span className="text-secondary text-[10px] font-bold uppercase tracking-widest">3 New Updates</span>
-          </div>
-          <div className="space-y-4">
-            {[
-              { title: 'New Library Resources Available', content: 'We have added 50+ new e-books to the digital library.', date: 'Today' },
-              { title: 'Challenge Sprint 2 Guidelines', content: 'Please review the updated presentation criteria for Sprint 2.', date: 'Yesterday' },
-            ].map((announcement, i) => (
-              <div key={i} className="bg-white p-6 rounded-xl border border-outline flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-surface-low transition-all editorial-shadow">
-                <div>
-                  <h4 className="text-sm font-bold text-on-surface mb-1">{announcement.title}</h4>
-                  <p className="text-xs text-secondary">{announcement.content}</p>
-                </div>
-                <span className="text-[10px] font-bold text-secondary uppercase tracking-widest whitespace-nowrap">{announcement.date}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Upcoming Tasks */}
-        <div className="mt-16">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-black text-on-surface">Upcoming Tasks</h3>
-            <button className="text-primary text-[10px] font-bold uppercase tracking-widest hover:underline">+ Add Task</button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              { title: 'Database Normalization Exercise', due: 'Tomorrow', priority: 'High' },
-              { title: 'Python API Integration', due: 'In 3 days', priority: 'Medium' },
-            ].map((task, i) => (
-              <div key={i} className="bg-white p-4 rounded-xl border border-outline flex items-center justify-between gap-4 hover:bg-surface-low transition-all editorial-shadow group">
-                <div className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded border border-outline flex items-center justify-center group-hover:border-primary transition-colors">
-                    <div className="w-2 h-2 bg-primary rounded-sm opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                  <span className="text-sm font-bold text-on-surface">{task.title}</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className={`text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full ${task.priority === 'High' ? 'bg-red-100 text-red-600' : 'bg-yellow-100 text-yellow-600'}`}>
-                    {task.priority}
-                  </span>
-                  <span className="text-[10px] font-bold text-secondary uppercase tracking-widest whitespace-nowrap">{task.due}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Study Group */}
-        <div className="mt-16">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-black text-on-surface">Study Groups</h3>
-            <button className="text-primary text-[10px] font-bold uppercase tracking-widest hover:underline">Find Group</button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { name: 'Software Eng. Team A', members: 4, active: true },
-              { name: 'Python Data Science', members: 12, active: false },
-              { name: 'Front-end Masters', members: 8, active: true },
-            ].map((group, i) => (
-              <div key={i} className="bg-white p-6 rounded-xl border border-outline flex flex-col gap-4 hover:bg-surface-low transition-all editorial-shadow group relative overflow-hidden">
-                {group.active && <div className="absolute top-0 right-0 w-2 h-2 bg-green-500 rounded-full m-4 animate-pulse" />}
-                <h4 className="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">{group.name}</h4>
-                <div className="flex items-center justify-between">
-                  <div className="flex -space-x-2">
-                    {[1, 2, 3].map(j => (
-                      <div key={j} className="w-6 h-6 rounded-full border-2 border-white bg-surface-high overflow-hidden">
-                        <img src={`https://picsum.photos/seed/user${i}${j}/40/40`} alt="Member" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+            {todayEvents.length > 0 ? (
+              todayEvents.map((event, i) => {
+                const subject = SUBJECTS.find(s => s.id === event.subjectId);
+                return (
+                  <div key={i} className="bg-white p-4 rounded-xl border border-outline flex items-center gap-4 editorial-shadow">
+                    <div className="text-center min-w-[60px]">
+                      <p className="text-xs font-bold text-on-surface">{event.time}</p>
+                      <p className="text-[10px] font-bold text-secondary uppercase tracking-widest">{event.time.split(':')[0] >= '12' ? 'PM' : 'AM'}</p>
+                    </div>
+                    <div className="w-px h-8 bg-outline" />
+                    <div>
+                      <h4 className="text-sm font-bold text-on-surface">{event.title}</h4>
+                      <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: subject?.color || '#bb0013' }} />
+                        <p className="text-[10px] font-bold text-secondary uppercase tracking-widest">{event.type}</p>
                       </div>
-                    ))}
-                    <div className="w-6 h-6 rounded-full border-2 border-white bg-surface-low flex items-center justify-center text-[8px] font-bold">+{group.members - 3}</div>
+                    </div>
                   </div>
-                  <button className="text-[10px] font-bold text-primary uppercase tracking-widest hover:underline">Join</button>
-                </div>
+                );
+              })
+            ) : (
+              <div className="col-span-1 md:col-span-2 lg:col-span-3 bg-white p-8 rounded-xl border border-outline text-center editorial-shadow">
+                <p className="text-secondary font-medium">No classes scheduled for today</p>
               </div>
-            ))}
+            )}
           </div>
         </div>
 
-        {/* Upcoming Exams */}
-        <div className="mt-16">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-black text-on-surface">Upcoming Exams</h3>
-            <Link to="/schedule" className="text-primary text-[10px] font-bold uppercase tracking-widest hover:underline">Full Schedule</Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { title: 'Database Systems', date: 'Nov 12', time: '14:00', room: 'Lab 402' },
-              { title: 'Software Engineering', date: 'Nov 15', time: '08:00', room: 'Auditorium' },
-              { title: 'Front-end Dev', date: 'Nov 18', time: '10:00', room: 'Lab 201' },
-              { title: 'Python DS', date: 'Nov 22', time: '16:00', room: 'Lab 305' },
-            ].map((exam, i) => (
-              <div key={i} className="bg-white p-5 rounded-xl border border-outline flex flex-col gap-3 hover:bg-surface-low transition-all editorial-shadow group">
-                <div className="flex justify-between items-start">
-                  <h4 className="text-xs font-bold text-on-surface group-hover:text-primary transition-colors">{exam.title}</h4>
-                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest">{exam.date}</span>
-                </div>
-                <div className="flex items-center gap-4 text-secondary">
-                  <div className="flex items-center gap-1">
-                    <Clock size={10} />
-                    <span className="text-[9px] font-bold">{exam.time}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-[9px] font-bold uppercase tracking-widest">{exam.room}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Attendance */}
-        <div className="mt-16">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-black text-on-surface">Attendance Overview</h3>
-            <span className="text-secondary text-[10px] font-bold uppercase tracking-widest">Last 30 Days</span>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {SUBJECTS.map((subject, i) => (
-              <div key={i} className="bg-white p-4 rounded-xl border border-outline flex flex-col items-center gap-3 editorial-shadow">
-                <div className="relative w-12 h-12">
-                  <svg className="w-full h-full" viewBox="0 0 36 36">
-                    <path
-                      className="text-surface-high stroke-current"
-                      strokeWidth="3"
-                      fill="none"
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    />
-                    <path
-                      className="stroke-current"
-                      style={{ color: subject.color }}
-                      strokeWidth="3"
-                      strokeDasharray={`${85 + i * 2}, 100`}
-                      strokeLinecap="round"
-                      fill="none"
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-on-surface">
-                    {85 + i * 2}%
-                  </div>
-                </div>
-                <span className="text-[8px] font-bold text-secondary uppercase tracking-widest text-center truncate w-full">
-                  {subject.name}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Study Time */}
-        <div className="mt-16">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-black text-on-surface">Study Time Distribution</h3>
-            <span className="text-secondary text-[10px] font-bold uppercase tracking-widest">Weekly Average</span>
-          </div>
-          <div className="bg-white p-8 rounded-2xl border border-outline shadow-sm">
-            <div className="flex flex-col gap-6">
-              {SUBJECTS.slice(0, 4).map((subject, i) => (
-                <div key={i} className="flex items-center gap-4">
-                  <span className="text-[10px] font-bold text-on-surface uppercase tracking-widest w-32 truncate">{subject.name}</span>
-                  <div className="flex-1 h-2 bg-surface-low rounded-full overflow-hidden">
-                    <div 
-                      className="h-full rounded-full" 
-                      style={{ 
-                        backgroundColor: subject.color,
-                        width: `${40 + i * 15}%`
-                      }} 
-                    />
-                  </div>
-                  <span className="text-[10px] font-bold text-secondary uppercase tracking-widest w-12 text-right">{8 + i * 2}h</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Upcoming Events */}
-        <div className="mt-16">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-black text-on-surface">Upcoming Events</h3>
-            <Link to="/schedule" className="text-primary text-[10px] font-bold uppercase tracking-widest hover:underline">Full Calendar</Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              { title: 'Tech Talk: Future of AI', date: 'Oct 28', time: '18:00', location: 'Main Hall' },
-              { title: 'Hackathon 2024 Kickoff', date: 'Nov 02', time: '09:00', location: 'Innovation Lab' },
-            ].map((event, i) => (
-              <div key={i} className="bg-white p-6 rounded-xl border border-outline flex flex-col gap-4 hover:bg-surface-low transition-all editorial-shadow group">
-                <div className="flex justify-between items-start">
-                  <h4 className="text-lg font-bold text-on-surface group-hover:text-primary transition-colors">{event.title}</h4>
-                  <div className="text-right">
-                    <p className="text-sm font-bold text-primary uppercase tracking-widest">{event.date}</p>
-                    <p className="text-[10px] font-bold text-secondary uppercase tracking-widest">{event.time}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 text-secondary">
-                  <span className="text-[10px] font-bold uppercase tracking-widest">📍 {event.location}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Recent Activity */}
-        <div className="mt-16">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-black text-on-surface">Recent Activity</h3>
-            <span className="text-secondary text-[10px] font-bold uppercase tracking-widest">Last 24 Hours</span>
-          </div>
-          <div className="bg-white rounded-2xl border border-outline shadow-sm overflow-hidden">
-            {[
-              { action: 'Created a new note', target: 'Pandas Dataframes', time: '2h ago', icon: '📝' },
-              { action: 'Completed a task', target: 'Database Normalization', time: '5h ago', icon: '✅' },
-              { action: 'Joined a study group', target: 'Software Eng. Team A', time: '8h ago', icon: '👥' },
-              { action: 'Updated profile picture', target: '', time: '12h ago', icon: '👤' },
-            ].map((activity, i) => (
-              <div key={i} className={`p-4 flex items-center justify-between gap-4 hover:bg-surface-low transition-all ${i !== 3 ? 'border-b border-outline' : ''}`}>
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-surface-low flex items-center justify-center text-xl">
-                    {activity.icon}
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-on-surface">{activity.action}</p>
-                    {activity.target && <p className="text-[10px] font-bold text-primary uppercase tracking-widest">{activity.target}</p>}
-                  </div>
-                </div>
-                <span className="text-[10px] font-bold text-secondary uppercase tracking-widest">{activity.time}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Quick Links */}
-        <div className="mt-16">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-black text-on-surface">Quick Navigation</h3>
-            <span className="text-secondary text-[10px] font-bold uppercase tracking-widest">Shortcuts</span>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { title: 'New Note', path: '/editor', icon: <Plus size={16} /> },
-              { title: 'Schedule', path: '/schedule', icon: <CalendarDays size={16} /> },
-              { title: 'Resources', path: '/resources', icon: <ArrowUpRight size={16} /> },
-              { title: 'Settings', path: '/', icon: <Settings size={16} /> },
-            ].map((link, i) => (
-              <Link key={i} to={link.path} className="bg-white p-4 rounded-xl border border-outline flex items-center gap-3 hover:bg-surface-low transition-all editorial-shadow group">
-                <div className="w-8 h-8 rounded-lg bg-surface-low flex items-center justify-center text-secondary group-hover:bg-primary group-hover:text-white transition-all">
-                  {link.icon}
-                </div>
-                <span className="text-[10px] font-bold text-on-surface uppercase tracking-widest">{link.title}</span>
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Social */}
-        <div className="mt-16">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-black text-on-surface">Community Activity</h3>
-            <span className="text-secondary text-[10px] font-bold uppercase tracking-widest">Global Feed</span>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { user: 'Maria Silva', action: 'shared a note', target: 'React Hooks', time: '10m ago' },
-              { user: 'João Pereira', action: 'started a study session', target: 'SQL Basics', time: '25m ago' },
-              { user: 'Ana Costa', action: 'asked a question', target: 'Java Generics', time: '1h ago' },
-            ].map((post, i) => (
-              <div key={i} className="bg-white p-4 rounded-xl border border-outline flex items-center gap-4 hover:bg-surface-low transition-all editorial-shadow group">
-                <div className="w-10 h-10 rounded-full border border-outline overflow-hidden">
-                  <img src={`https://picsum.photos/seed/user${i}/40/40`} alt="User" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-on-surface"><span className="text-primary">{post.user}</span> {post.action}</p>
-                  <p className="text-[10px] font-bold text-secondary uppercase tracking-widest">{post.target} • {post.time}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Leaderboard */}
-        <div className="mt-16">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-black text-on-surface">Top Contributors</h3>
-            <span className="text-secondary text-[10px] font-bold uppercase tracking-widest">This Week</span>
-          </div>
-          <div className="bg-white rounded-2xl border border-outline shadow-sm overflow-hidden">
-            {[
-              { name: 'Lucas Kaftan', points: 1250, rank: 1, avatar: 'lucas' },
-              { name: 'Beatriz Lima', points: 1120, rank: 2, avatar: 'beatriz' },
-              { name: 'Carlos Eduardo', points: 980, rank: 3, avatar: 'carlos' },
-            ].map((user, i) => (
-              <div key={i} className={`p-4 flex items-center justify-between gap-4 hover:bg-surface-low transition-all ${i !== 2 ? 'border-b border-outline' : ''}`}>
-                <div className="flex items-center gap-4">
-                  <span className={`text-sm font-black w-6 text-center ${user.rank === 1 ? 'text-yellow-500' : user.rank === 2 ? 'text-gray-400' : 'text-amber-600'}`}>
-                    #{user.rank}
-                  </span>
-                  <div className="w-10 h-10 rounded-full border border-outline overflow-hidden">
-                    <img src={`https://picsum.photos/seed/${user.avatar}/40/40`} alt={user.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                  </div>
-                  <span className="text-sm font-bold text-on-surface">{user.name}</span>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-black text-primary">{user.points}</p>
-                  <p className="text-[10px] font-bold text-secondary uppercase tracking-widest">Points</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
 
         {/* Study Tips */}
         <div className="mt-16">
