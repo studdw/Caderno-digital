@@ -16,7 +16,7 @@ export default function Dashboard() {
       {/* Hero Section */}
       <section className="relative h-[320px] w-full overflow-hidden">
         <img 
-          src="https://picsum.photos/seed/campus/1920/600" 
+          src="https://th.bing.com/th/id/R.87609b924ac202d07923aeaf7a3ddbb4?rik=1OKfYpPYd7DgMQ&riu=http%3a%2f%2ffocalizando.com.br%2fsites%2fdefault%2ffiles%2f2025-01%2ffiap-revolucao-na-educacao-digital-para-o-futuro.jpg&ehk=BarLo3k8WFvY%2fxEAJlZenl%2fawTbKCwSu8Ok%2by3OySQY%3d&risl=&pid=ImgRaw&r=0" 
           alt="FIAP Campus" 
           className="w-full h-full object-cover brightness-75"
           referrerPolicy="no-referrer"
