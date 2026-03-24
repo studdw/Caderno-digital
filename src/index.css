@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@500;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-headline: "Manrope", sans-serif;
+
+  --color-primary: #bb0013;
+  --color-primary-hover: #93000d;
+  --color-background: #f9f9f9;
+  --color-surface: #ffffff;
+  --color-surface-low: #f3f3f3;
+  --color-surface-high: #e8e8e8;
+  --color-on-surface: #1b1b1b;
+  --color-secondary: #5f5e5e;
+  --color-outline: rgba(147, 110, 106, 0.15);
+}
+
+@layer base {
+  body {
+    @apply bg-background text-on-surface font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline;
+  }
+}
+
+/* Custom scrollbar for focus sanctuary */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-line-border {
+  border: none;
+}
+
+.glass-header {
+  @apply bg-white/80 backdrop-blur-xl sticky top-0 z-50;
+}
+
+.editorial-shadow {
+  box-shadow: 0 16px 32px -12px rgba(27, 27, 27, 0.04);
+}
