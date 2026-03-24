@@ -19,7 +19,6 @@ export default function App() {
               <Route path="/subject/:id" element={<SubjectView />} />
               <Route path="/editor" element={<NoteEditor />} />
               <Route path="/schedule" element={<Schedule />} />
-              <Route path="/resources" element={<div className="p-12 text-center text-secondary">Resources View (Coming Soon)</div>} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>

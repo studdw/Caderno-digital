@@ -31,7 +31,9 @@ export interface ScheduleEvent {
   title: string;
   time: string;
   duration: string;
+  description: string;
   subjectId: string;
   type: 'lecture' | 'lab' | 'exam' | 'presentation';
   day: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
+  isOnline?: boolean;
 }

@@ -6,7 +6,7 @@ export default function TopBar() {
     <header className="glass-header flex justify-between items-center w-full px-8 py-3 border-b border-outline">
       <div className="flex items-center gap-8">
         <NavLink to="/" className="text-xl font-black tracking-tighter text-primary">
-          Digital Monolith
+          Caderno Digital
         </NavLink>
         <nav className="hidden md:flex items-center gap-8">
           <NavLink 
@@ -26,15 +26,6 @@ export default function TopBar() {
             `}
           >
             Schedule
-          </NavLink>
-          <NavLink 
-            to="/resources" 
-            className={({ isActive }) => `
-              font-headline text-sm font-bold tracking-tight transition-colors duration-200
-              ${isActive ? 'text-primary' : 'text-secondary hover:text-primary'}
-            `}
-          >
-            Resources
           </NavLink>
         </nav>
       </div>
