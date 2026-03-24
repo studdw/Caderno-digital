@@ -195,8 +195,8 @@ export default function Dashboard() {
         {/* Footer */}
         <footer className="mt-24 pt-12 border-t border-outline flex flex-col md:flex-row justify-between items-center gap-8 text-secondary">
           <div className="flex flex-col items-center md:items-start gap-2">
-            <p className="text-xl font-black tracking-tighter text-primary">Digital Monolith</p>
-            <p className="text-[10px] font-bold uppercase tracking-widest">© 2024 Academic Environment</p>
+            <p className="text-xl font-black tracking-tighter text-primary">Caderno Digital</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest">© 2026 Academic Environment</p>
           </div>
           <div className="flex gap-8">
             <Link to="/" className="text-[10px] font-bold uppercase tracking-widest hover:text-primary transition-colors">Privacy Policy</Link>

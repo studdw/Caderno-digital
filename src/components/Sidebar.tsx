@@ -34,8 +34,8 @@ export default function Sidebar() {
             <GraduationCap size={24} />
           </div>
           <div>
-            <p className="font-headline text-sm font-bold text-on-surface">Student Notebook</p>
-            <p className="font-headline text-[10px] font-bold tracking-widest uppercase text-secondary">Academic Year 2024</p>
+            <p className="font-headline text-sm font-bold text-on-surface">Caderno do Aluno</p>
+            <p className="font-headline text-[10px] font-bold tracking-widest uppercase text-secondary">2026</p>
           </div>
         </div>
       </div>
