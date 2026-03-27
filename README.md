@@ -1,42 +1,64 @@
-## Run Locally
+## 🚀 Executando o projeto localmente
 
-**Prerequisites:** Node.js, Supabase account
+**Pré-requisitos:** Node.js, conta no Supabase
 
-1. Install dependencies:
-   `npm install`
+1. Instale as dependências:
 
-2. Set up Supabase:
-   - Create a new project at [supabase.com](https://supabase.com)
-   - Go to Settings > API to get your project URL and anon key
-   - Create a `.env.local` file in the root directory with:
+   ```
+   npm install
+   ```
+
+2. Configure o Supabase:
+
+   * Crie um projeto em: https://supabase.com
+   * Vá em **Settings > API** para pegar sua URL e chave anônima
+   * Crie um arquivo `.env.local` na raiz do projeto com:
+
      ```
-     VITE_SUPABASE_URL=https://your-project.supabase.co
-     VITE_SUPABASE_ANON_KEY=your-anon-key-here
-     GEMINI_API_KEY=your-gemini-api-key
+     VITE_SUPABASE_URL=https://seu-projeto.supabase.co
+     VITE_SUPABASE_ANON_KEY=sua-chave-anon-aqui
+     GEMINI_API_KEY=sua-chave-gemini-aqui
      ```
 
-3. Set up the database:
-   - Go to your Supabase dashboard > SQL Editor
-   - Run the SQL from `src/database/schema.sql` to create tables and RLS policies
+3. Configure o banco de dados:
 
-4. Run the app:
-   `npm run dev`
+   * Acesse o Supabase > **SQL Editor**
+   * Execute o script localizado em:
 
-## ⚠️ Important Notes
+     ```
+     src/database/schema.sql
+     ```
+   * Isso criará as tabelas e regras de segurança (RLS)
 
-- **Without Supabase configured**: The app will show a configuration message instead of a blank page
-- **Database setup required**: Run the SQL migrations before authentication will work
-- **Email verification**: Supabase requires email verification for new accounts
+4. Rode o projeto:
 
-## Authentication
+   ```
+   npm run dev
+   ```
 
-The app uses Supabase Auth for user authentication with the following features:
-- User registration with email verification
-- Login/logout functionality
-- Protected routes
-- User profiles with unique usernames
+---
 
-## Database Schema
+## ⚠️ Observações importantes
 
-- `auth.users`: Managed by Supabase Auth
-- `user_profiles`: Custom user profiles with username and timestamps
+* **Sem configurar o Supabase**: o app exibirá uma mensagem de configuração (não ficará em branco)
+* **Banco obrigatório**: execute o script SQL antes de testar autenticação
+* **Verificação de email**: o Supabase exige confirmação para novos usuários
+
+---
+
+## 🔐 Autenticação
+
+O projeto utiliza **Supabase Auth**, com suporte a:
+
+* Cadastro de usuários com verificação de email
+* Login e logout
+* Rotas protegidas
+* Perfis de usuário com usernames únicos
+
+---
+
+## 🗄️ Estrutura do banco de dados
+
+* `auth.users`: gerenciado automaticamente pelo Supabase
+* `user_profiles`: tabela customizada com username e timestamps
+
