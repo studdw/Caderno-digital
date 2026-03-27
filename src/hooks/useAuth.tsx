@@ -47,59 +47,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signUp = async (email: string, password: string, username: string) => {
-    try {
-      // First, check if user_profiles exists and username is available
-      const { data: existingProfile, error: existingProfileError } = await supabase
-        .from('user_profiles')
-        .select('username')
-        .eq('username', username)
-        .maybeSingle();
+  try {
+    const { data: existingProfile, error: existingProfileError } = await supabase
+      .from('user_profiles')
+      .select('username')
+      .eq('username', username)
+      .maybeSingle();
 
-      if (existingProfileError) {
-        console.error('Error checking username availability:', existingProfileError);
-        return {
-          error: {
-            message:
-              existingProfileError.code === 'PGRST116'
-                ? 'Tabela user_profiles não encontrada. Execute as migrations no Supabase.'
-                : `Erro ao verificar usuário: ${existingProfileError.message}`,
-          } as AuthError,
-        };
-      }
-
-      if (existingProfile) {
-        return { error: { message: 'Nome de usuário já está em uso' } as AuthError };
-      }
-
-      // Sign up the user
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-
-      if (error) return { error };
-
-      if (data.user) {
-        // Create user profile
-        const { error: profileError } = await supabase
-          .from('user_profiles')
-          .insert({
-            user_id: data.user.id,
-            username,
-          });
-
-        if (profileError) {
-          // If profile creation fails, we should probably delete the user or handle it
-          console.error('Error creating profile:', profileError);
-          return { error: { message: profileError.message } as AuthError };
-        }
-      }
-
-      return { error: null };
-    } catch (error) {
-      return { error: error as AuthError };
+    if (existingProfileError) {
+      return {
+        error: {
+          message: `Erro ao verificar usuário: ${existingProfileError.message}`,
+        } as AuthError,
+      };
     }
-  };
+
+    if (existingProfile) {
+      return { error: { message: 'Nome de usuário já está em uso' } as AuthError };
+    }
+
+    // Passa o username como metadata — o trigger vai usá-lo
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { username }, // <-- aqui está a mudança chave
+      },
+    });
+
+    return { error };
+    // Remova todo o bloco de insert manual em user_profiles daqui
+  } catch (error) {
+    return { error: error as AuthError };
+  }
+};
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
