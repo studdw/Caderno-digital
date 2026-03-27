@@ -182,15 +182,15 @@ export default function RegisterForm() {
                     <span>Mínimo 8 caracteres</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    {/ [A-Z]/.test(formData.password) ? <Check size={12} className="text-green-500" /> : <X size={12} className="text-red-500" />}
+                    {/[A-Z]/.test(formData.password) ? <Check size={12} className="text-green-500" /> : <X size={12} className="text-red-500" />}
                     <span>Uma letra maiúscula</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    {/ [a-z]/.test(formData.password) ? <Check size={12} className="text-green-500" /> : <X size={12} className="text-red-500" />}
+                    {/[a-z]/.test(formData.password) ? <Check size={12} className="text-green-500" /> : <X size={12} className="text-red-500" />}
                     <span>Uma letra minúscula</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    {/ \d/.test(formData.password) ? <Check size={12} className="text-green-500" /> : <X size={12} className="text-red-500" />}
+                    {/\d/.test(formData.password) ? <Check size={12} className="text-green-500" /> : <X size={12} className="text-red-500" />}
                     <span>Um número</span>
                   </div>
                 </div>
