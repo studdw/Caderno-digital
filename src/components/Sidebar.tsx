@@ -14,7 +14,10 @@ import {
   Database,
   Bot
 } from 'lucide-react';
-import { SUBJECTS } from '../constants';
+import { useState, useEffect } from 'react';
+import { supabase } from '../database/supabase';
+import { useAuth } from '../hooks/useAuth';
+import NewSubjectModal from './NewSubjectModal';
 
 const iconMap: Record<string, any> = {
   engineering: Wrench,
@@ -26,6 +29,40 @@ const iconMap: Record<string, any> = {
 };
 
 export default function Sidebar() {
+  const { user } = useAuth();
+  const [showNewSubject, setShowNewSubject] = useState(false);
+  const [subjects, setSubjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user) fetchSubjects();
+    // eslint-disable-next-line
+  }, [user]);
+
+  const fetchSubjects = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('subjects')
+      .select('*')
+      .eq('user_id', user?.id)
+      .order('created_at', { ascending: false });
+    if (!error) setSubjects(data || []);
+    setLoading(false);
+  };
+
+  const handleCreateSubject = async (subject: { name: string; description: string; icon: string; color: string }) => {
+    if (!user) return;
+    const { error } = await supabase.from('subjects').insert({
+      user_id: user.id,
+      name: subject.name,
+      description: subject.description,
+      icon: subject.icon,
+      color: subject.color,
+    });
+    setShowNewSubject(false);
+    if (!error) fetchSubjects();
+  };
+
   return (
     <aside className="h-screen w-72 fixed left-0 top-0 hidden md:flex flex-col bg-surface-low z-40 pt-20">
       <div className="px-8 mb-8">
@@ -41,38 +78,42 @@ export default function Sidebar() {
       </div>
 
       <div className="px-6 mb-6">
-        <NavLink 
-          to="/editor"
+        <button
+          onClick={() => setShowNewSubject(true)}
           className="w-full bg-primary text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-primary-hover transition-colors shadow-sm"
         >
           <Plus size={16} />
-          <span>New Note</span>
-        </NavLink>
+          <span>Nova Matéria</span>
+        </button>
       </div>
 
       <nav className="flex-1 overflow-y-auto hide-scrollbar">
         <div className="mb-4">
           <p className="px-8 mb-2 font-headline text-[10px] font-bold tracking-widest uppercase text-secondary/60">Main Subjects</p>
           <div className="space-y-1">
-            {SUBJECTS.map((subject) => {
-              const Icon = iconMap[subject.icon] || Terminal;
-              return (
-                <NavLink
-                  key={subject.id}
-                  to={`/subject/${subject.id}`}
-                  className={({ isActive }) => `
-                    flex items-center gap-4 px-8 py-3 transition-all duration-200 ease-in-out group
-                    ${isActive 
-                      ? 'border-l-[3px] border-primary bg-white text-on-surface font-bold shadow-sm' 
-                      : 'text-secondary hover:bg-white/50 hover:text-primary'
-                    }
-                  `}
-                >
-                  <Icon size={18} className="group-hover:text-primary transition-colors" />
-                  <span className="font-headline text-xs font-bold tracking-widest uppercase">{subject.name}</span>
-                </NavLink>
-              );
-            })}
+            {loading ? (
+              <div className="px-8 py-4 text-secondary">Carregando...</div>
+            ) : (
+              subjects.map((subject) => {
+                const Icon = iconMap[subject.icon] || Terminal;
+                return (
+                  <NavLink
+                    key={subject.id}
+                    to={`/subject/${subject.id}`}
+                    className={({ isActive }) => `
+                      flex items-center gap-4 px-8 py-3 transition-all duration-200 ease-in-out group
+                      ${isActive 
+                        ? 'border-l-[3px] border-primary bg-white text-on-surface font-bold shadow-sm' 
+                        : 'text-secondary hover:bg-white/50 hover:text-primary'
+                      }
+                    `}
+                  >
+                    <Icon size={18} className="group-hover:text-primary transition-colors" />
+                    <span className="font-headline text-xs font-bold tracking-widest uppercase">{subject.name}</span>
+                  </NavLink>
+                );
+              })
+            )}
           </div>
         </div>
       </nav>
@@ -93,6 +134,13 @@ export default function Sidebar() {
           <span className="font-headline text-xs font-bold tracking-widest uppercase">Trash</span>
         </NavLink>
       </div>
+
+      {showNewSubject && (
+        <NewSubjectModal 
+          onClose={() => setShowNewSubject(false)}
+          onCreate={handleCreateSubject}
+        />
+      )}
     </aside>
   );
 }

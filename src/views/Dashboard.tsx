@@ -2,10 +2,32 @@ import { motion } from 'motion/react';
 import { ArrowUpRight, CalendarDays, Clock, Plus, Settings } from 'lucide-react';
 import { SUBJECTS, MILESTONE, SCHEDULE_EVENTS } from '../constants';
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { supabase } from '../database/supabase';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Dashboard() {
-  const featuredSubject = SUBJECTS.find(s => s.featured);
-  const otherSubjects = SUBJECTS.filter(s => !s.featured);
+  const { user } = useAuth();
+  const [subjects, setSubjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user) fetchSubjects();
+    // eslint-disable-next-line
+  }, [user]);
+
+  const fetchSubjects = async () => {
+    const { data } = await supabase
+      .from('subjects')
+      .select('*')
+      .eq('user_id', user?.id)
+      .order('created_at', { ascending: false });
+    setSubjects(data || []);
+    setLoading(false);
+  };
+
+  const featuredSubject = subjects.length > 0 ? subjects[0] : null;
+  const otherSubjects = subjects.slice(1);
 
   // Get today's day of the week
   const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as const;
@@ -32,10 +54,10 @@ export default function Dashboard() {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
         <div className="absolute bottom-10 left-10 max-w-2xl">
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-on-surface mb-2">
-            Welcome back, ADS Student.
+            Boas Vindas de volta!
           </h1>
           <p className="text-secondary font-medium text-lg italic">
-            The future of technology is built one line of code at a time.
+            Faça suas anotações, organize suas matérias e conquiste seus objetivos acadêmicos!
           </p>
         </div>
       </section>
@@ -54,6 +76,11 @@ export default function Dashboard() {
         </div>
 
         {/* Bento Grid */}
+        {loading ? (
+          <div className="text-center py-12">Carregando suas matérias...</div>
+        ) : subjects.length === 0 ? (
+          <div className="text-center py-12"><p className="text-secondary">Você ainda não criou nenhuma matéria. Clique em "Nova Matéria" na lateral!</p></div>
+        ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Featured Subject */}
           {featuredSubject && (
@@ -67,16 +94,16 @@ export default function Dashboard() {
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
                     <ArrowUpRight size={24} />
                   </div>
-                  <h4 className="text-2xl font-bold mb-2">{featuredSubject.name}</h4>
-                  <p className="text-secondary text-sm max-w-sm mb-6">{featuredSubject.description}</p>
+                  <h4 className="text-2xl font-bold mb-2">{featuredSubject?.name}</h4>
+                  <p className="text-secondary text-sm max-w-sm mb-6">{featuredSubject?.description || 'Sem descrição'}</p>
                   <div className="flex gap-4">
                     <div className="flex flex-col">
-                      <span className="text-xl font-bold text-on-surface">{featuredSubject.notesCount}</span>
+                      <span className="text-xl font-bold text-on-surface">0</span>
                       <span className="text-[10px] font-bold uppercase tracking-widest text-secondary/60">Notes</span>
                     </div>
                     <div className="w-px h-8 bg-outline self-center" />
                     <div className="flex flex-col">
-                      <span className="text-xl font-bold text-on-surface">{featuredSubject.classesCount}</span>
+                      <span className="text-xl font-bold text-on-surface">0</span>
                       <span className="text-[10px] font-bold uppercase tracking-widest text-secondary/60">Classes</span>
                     </div>
                   </div>
@@ -107,6 +134,7 @@ export default function Dashboard() {
             </Link>
           ))}
         </div>
+        )}
 
         {/* Schedule Preview */}
         <div className="mt-16">
@@ -115,31 +143,9 @@ export default function Dashboard() {
             <Link to="/schedule" className="text-primary text-xs font-bold tracking-widest uppercase hover:underline">Full Schedule</Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {todayEvents.length > 0 ? (
-              todayEvents.map((event, i) => {
-                const subject = SUBJECTS.find(s => s.id === event.subjectId);
-                return (
-                  <div key={i} className="bg-white p-4 rounded-xl border border-outline flex items-center gap-4 editorial-shadow">
-                    <div className="text-center min-w-[60px]">
-                      <p className="text-xs font-bold text-on-surface">{event.time}</p>
-                      <p className="text-[10px] font-bold text-secondary uppercase tracking-widest">{event.time.split(':')[0] >= '12' ? 'PM' : 'AM'}</p>
-                    </div>
-                    <div className="w-px h-8 bg-outline" />
-                    <div>
-                      <h4 className="text-sm font-bold text-on-surface">{event.title}</h4>
-                      <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: subject?.color || '#bb0013' }} />
-                        <p className="text-[10px] font-bold text-secondary uppercase tracking-widest">{event.type}</p>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })
-            ) : (
-              <div className="col-span-1 md:col-span-2 lg:col-span-3 bg-white p-8 rounded-xl border border-outline text-center editorial-shadow">
-                <p className="text-secondary font-medium">No classes scheduled for today</p>
-              </div>
-            )}
+            <div className="col-span-1 md:col-span-2 lg:col-span-3 bg-white p-8 rounded-xl border border-outline text-center editorial-shadow">
+              <p className="text-secondary font-medium">Sua agenda aparecerá aqui quando as funcionalidades forem concluídas</p>
+            </div>
           </div>
         </div>
 
