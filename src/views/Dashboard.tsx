@@ -54,10 +54,10 @@ export default function Dashboard() {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
         <div className="absolute bottom-10 left-10 max-w-2xl">
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-on-surface mb-2">
-            Welcome back, ADS Student.
+            Boas Vindas de volta!
           </h1>
           <p className="text-secondary font-medium text-lg italic">
-            The future of technology is built one line of code at a time.
+            Faça suas anotações, organize suas matérias e conquiste seus objetivos acadêmicos!
           </p>
         </div>
       </section>

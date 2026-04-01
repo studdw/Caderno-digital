@@ -66,11 +66,10 @@ export default function NoteEditor() {
               placeholder="Note Title..."
             />
             <div className="flex items-center gap-3 text-secondary text-xs font-bold tracking-widest uppercase">
-              <span className="bg-surface-high px-3 py-1 rounded">Module 04</span>
-              <span className="bg-surface-high px-3 py-1 rounded">Architecture</span>
+              <span className="bg-surface-high px-3 py-1 rounded">Module</span>
+              <span className="bg-surface-high px-3 py-1 rounded"></span>
               <div className="flex items-center gap-1">
-                <Clock size={12} />
-                <span>Nov 24, 2024</span>
+                <Clock size={12} /> 
               </div>
             </div>
             <textarea 

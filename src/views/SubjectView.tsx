@@ -23,6 +23,8 @@ export default function SubjectView() {
   const [noteTitle, setNoteTitle] = useState('');
   const [noteContent, setNoteContent] = useState('');
   const [noteTags, setNoteTags] = useState<string[]>([]);
+  const [saveError, setSaveError] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (user && id) {
@@ -64,24 +66,60 @@ export default function SubjectView() {
   };
 
   const saveNote = async () => {
-    if (!noteTitle.trim() || !noteContent.trim() || !subject) return;
-    const { error } = await supabase
-      .from('notes')
-      .insert({
-        user_id: user?.id,
-        subject_id: subject.id,
-        title: noteTitle,
-        content: noteContent,
-        tags: noteTags,
-      });
-    if (error) {
-      console.error('Error saving note:', error);
-    } else {
+    setSaveError('');
+    
+    // Validações
+    if (!noteTitle.trim()) {
+      setSaveError('O título da nota é obrigatório.');
+      return;
+    }
+    
+    if (!noteContent.trim()) {
+      setSaveError('O conteúdo da nota é obrigatório.');
+      return;
+    }
+    
+    if (!user) {
+      setSaveError('Você precisa estar logado para criar uma nota.');
+      return;
+    }
+    
+    if (!subject) {
+      setSaveError('Erro ao carregar a matéria. Recarregue a página.');
+      return;
+    }
+
+    setIsSaving(true);
+    
+    try {
+      const { error } = await supabase
+        .from('notes')
+        .insert({
+          user_id: user.id,
+          subject_id: subject.id,
+          title: noteTitle,
+          content: noteContent,
+          tags: noteTags,
+        });
+
+      if (error) {
+        console.error('Erro ao salvar nota:', error);
+        setSaveError(`Erro ao salvar nota: ${error.message}`);
+        return;
+      }
+
+      // Sucesso
       setNoteTitle('');
       setNoteContent('');
       setNoteTags([]);
+      setSaveError('');
       setShowNoteEditor(false);
-      fetchSubjectAndNotes();
+      await fetchSubjectAndNotes();
+    } catch (err: any) {
+      console.error('Erro inesperado:', err);
+      setSaveError('Erro inesperado ao salvar a nota.');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -145,21 +183,16 @@ export default function SubjectView() {
               </div>
               <div className="w-px h-8 bg-outline" />
               <div className="flex flex-col">
-                <span className="text-[10px] uppercase tracking-widest text-secondary font-bold mb-1">Average Grade</span>
-                <span className="text-2xl font-bold font-headline text-primary">9.5</span>
+                  <span className="text-2xl font-bold font-headline">Boa Sorte!</span>
               </div>
               <div className="w-px h-8 bg-outline" />
-              <div className="flex flex-col">
-                <span className="text-[10px] uppercase tracking-widest text-secondary font-bold mb-1">Completion</span>
-                <span className="text-2xl font-bold font-headline">68%</span>
-              </div>
             </div>
             <button 
               onClick={() => setShowNoteEditor(true)}
               className="bg-primary text-white px-6 py-3 rounded-lg font-headline font-bold text-sm tracking-tight flex items-center gap-2 shadow-lg shadow-primary/20 active:scale-95 transition-all"
             >
               <PlusCircle size={18} />
-              + New Class/Note
+              New Class/Note
             </button>
           </div>
 
@@ -246,10 +279,23 @@ export default function SubjectView() {
                 <button className="p-2 hover:bg-surface-low rounded-lg transition-colors text-secondary"><svg width="20" height="20" fill="none"><rect width="20" height="20" fill="none"/></svg>{'<'}/{'>'}</button>
               </div>
               <div className="flex gap-4">
-                <button onClick={() => setShowNoteEditor(false)} className="px-6 py-2 text-secondary font-headline text-xs font-bold uppercase tracking-widest hover:text-on-surface transition-colors">Cancel</button>
-                <button onClick={saveNote} className="px-8 py-2 bg-primary text-white rounded-lg font-headline text-xs font-bold uppercase tracking-widest shadow-sm active:scale-95 transition-transform">Save Note</button>
+                <button onClick={() => { setShowNoteEditor(false); setSaveError(''); }} className="px-6 py-2 text-secondary font-headline text-xs font-bold uppercase tracking-widest hover:text-on-surface transition-colors">Cancel</button>
+                <button 
+                  onClick={saveNote} 
+                  disabled={isSaving}
+                  className="px-8 py-2 bg-primary text-white rounded-lg font-headline text-xs font-bold uppercase tracking-widest shadow-sm active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSaving ? 'Salvando...' : 'Save Note'}
+                </button>
               </div>
             </div>
+            
+            {/* Error Message */}
+            {saveError && (
+              <div className="px-8 py-4 bg-red-50 border-b border-red-200 text-red-600 text-sm font-medium">
+                {saveError}
+              </div>
+            )}
             {/* Editor Content Canvas */}
             <div className="flex-1 overflow-y-auto hide-scrollbar">
               <div className="flex px-8 py-12 gap-12 max-w-4xl mx-auto w-full">
